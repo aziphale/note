@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/showdown@1.9.1/dist/showdown.min.js"></script>
+</head>
+
+<body>
+    <div id="note-all-id">
+        <textarea id="note-md-id"></textarea>
+
+        <div id="note-html-id">
+
+        </div>
+    </div>
+
+    <script>
+        var latest;
+        const html = document.getElementById("note-html-id");
+        const markdown = document.getElementById("note-md-id");
+        const converter = new showdown.Converter();
+        markdown.onchange = () => {
+            console.log("new content: " + markdown.value);
+            html.innerHTML = converter.makeHtml(markdown.value);
+            fetch("update", {
+                headers: {
+                    "Content-Type": "text/plain"
+                },
+                method: "POST",
+                body: markdown.value
+            })
+        }
+        markdown.onkeypress = (event) => {
+            if (event.keyCode == 13) {
+                console.log("new content: " + markdown.value);
+                html.innerHTML = converter.makeHtml(markdown.value);
+                fetch("update", {
+                    headers: {
+                        "Content-Type": "text/plain"
+                    },
+                    method: "POST",
+                    body: markdown.value
+                })
+            }
+        }
+
+        window.onload = () => {
+            document.cookie = 'sessionId=' + crypto.randomUUID();
+            talk();
+        };
+
+        function talk() {
+            latest = new WebSocket(`wss://${location.host}/echo`);
+            latest.onopen = () => {
+                console.log("connect successfully");
+            };
+            latest.onclose = () => {
+                console.log("connect closed");
+            };
+            latest.onmessage = (response) => {
+                console.log("received message: " + response.data);
+                markdown.value = response.data;
+                html.innerHTML = converter.makeHtml(markdown.value);
+            };
+        }
+    </script>
+    <style>
+        #note-all-id {
+            display: flex;
+            height: 800px;
+        }
+
+        #note-md-id {
+            width: 50%;
+            resize: none;
+        }
+
+        #note-html-id {
+            width: 50%;
+            border-width: 1px;
+            border-color: black;
+            border-style: solid;
+        }
+    </style>
+</body>
+
+</html>
