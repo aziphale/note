@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 
 <head>
+    <title>Sync Note</title>
+    <link rel="icon" href="/favicon.ico">
     <script src="https://cdn.jsdelivr.net/npm/showdown@1.9.1/dist/showdown.min.js"></script>
 </head>
 
 <body>
     <div id="note-all-id">
-        <textarea id="note-md-id"></textarea>
-
-        <div id="note-html-id">
-
-        </div>
+        <textarea id="note-md-id" title="Edit" placeholder="edit markdown here"></textarea>
+        <div id="note-blank-id"></div>
+        <div id="note-html-id"></div>
     </div>
 
     <script>
@@ -19,6 +19,12 @@
         const html = document.getElementById("note-html-id");
         const markdown = document.getElementById("note-md-id");
         const converter = new showdown.Converter();
+
+        window.onload = () => {
+            document.cookie = 'sessionId=' + crypto.randomUUID();
+            talk();
+        };
+
         markdown.onchange = () => {
             console.log("new content: " + markdown.value);
             html.innerHTML = converter.makeHtml(markdown.value);
@@ -44,11 +50,6 @@
             }
         }
 
-        window.onload = () => {
-            document.cookie = 'sessionId=' + crypto.randomUUID();
-            talk();
-        };
-
         function talk() {
             latest = new WebSocket(`wss://${location.host}/echo`);
             latest.onopen = () => {
@@ -60,26 +61,53 @@
             latest.onmessage = (response) => {
                 console.log("received message: " + response.data);
                 markdown.value = response.data;
-                html.innerHTML = converter.makeHtml(markdown.value);
+                html.innerHTML = converter.makeHtml(markdown.value) || '<h1>preview here</h1>';
             };
         }
     </script>
     <style>
+        body {
+            margin: 0px;
+        }
+
         #note-all-id {
+            margin: 0px;
             display: flex;
-            height: 800px;
+            height: 100vh;
         }
 
         #note-md-id {
-            width: 50%;
             resize: none;
+            width: 49%;
+        }
+
+        /* hide scroll */
+        #note-md-id::-webkit-scrollbar {
+            width: 0 !important
+        }
+
+        /* hide scroll for firefox */
+        #note-md-id {
+            overflow: -moz-scrollbars-none;
+        }
+
+        #note-blank-id {
+            width: 2%;
         }
 
         #note-html-id {
-            width: 50%;
-            border-width: 1px;
-            border-color: black;
-            border-style: solid;
+            overflow-y: auto;
+            width: 49%;
+        }
+
+        /* hide scroll */
+        #note-html-id::-webkit-scrollbar {
+            width: 0 !important
+        }
+
+        /* hide scroll for firefox */
+        #note-html-id {
+            overflow: -moz-scrollbars-none;
         }
     </style>
 </body>

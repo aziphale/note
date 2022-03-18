@@ -43,7 +43,7 @@ func Listen(channel string) (bareChannel <-chan string) {
 			case <-time.After(time.Duration(1) * time.Second):
 				close(bare)
 				sub.Close()
-				log.Println("channel push timeout")
+				log.Println("channel push timeout! closed")
 				return
 			}
 		}

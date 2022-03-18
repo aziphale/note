@@ -18,13 +18,13 @@ import (
 const NOTE string = "REIDS:NOTE:CONTENT"
 const WAKE string = "REIDS:NOTE:CONTENT:CHANGE"
 
-//go:embed ssl/ca.crt
+//go:embed ssl_dev/ca.crt
 var ca []byte
 
-//go:embed ssl/server.crt
+//go:embed ssl_dev/server.crt
 var cert []byte
 
-//go:embed ssl/server.key
+//go:embed ssl_dev/server.key
 var key []byte
 
 //go:embed static
@@ -77,7 +77,7 @@ func main() {
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 5 * time.Second,
 		TLSConfig: &tls.Config{
-			ServerName:   "example.com",
+			ServerName:   "sync.note.cloud",
 			ClientAuth:   tls.RequireAndVerifyClientCert,
 			ClientCAs:    clientCertPool,
 			Certificates: []tls.Certificate{serverCert},
