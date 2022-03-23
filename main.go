@@ -15,8 +15,8 @@ import (
 	"golang.org/x/net/websocket"
 )
 
-const NOTE string = "REIDS:NOTE:CONTENT"
-const WAKE string = "REIDS:NOTE:CONTENT:CHANGE"
+const NOTE string = "REDIS:NOTE:CONTENT"
+const WAKE string = "REDIS:NOTE:CONTENT:CHANGE"
 
 //go:embed ssl_dev/ca.crt
 var ca []byte
