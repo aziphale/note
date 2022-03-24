@@ -33,9 +33,9 @@
     --focus-ring-color: transparent;
 }
 
-code {
+pre {
     background-color: #f7f6f3;
-    padding: 0 2px 0 2px;
+    padding: 20px 30px;
 }
 
 a {
@@ -155,23 +155,6 @@ mark {
     padding-bottom: 2px;
     margin-left: 2px;
     margin-right: 2px;
-}
-
-.md-search-hit * {
-    color: var(--search-select-text-color);
-}
-
-/* Search highlight */
-.cm-search-hit.CodeMirror-selectedtext, .md-search-hit.md-search-select, .md-search-select {
-    outline: 0px solid var(--search-select-text-color);
-}
-
-.outline-item.select, .ty-search-item-line.select, .ty-search-item.select {
-    outline-width: 2px;
-}
-
-.outline-item.select {
-    outline-offset: 0px;
 }
 
 blockquote {
