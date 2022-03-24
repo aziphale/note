@@ -3,13 +3,13 @@
 
 <head>
     <title>Sync Note</title>
-    <link rel="icon" href="/favicon.ico">
-    <link rel="stylesheet" type="text/css" href="content.css">
+    <link rel="icon" href="favicon.ico">
+    <link rel="stylesheet" type="text/css" href="css/content.css">
     <!-- <link rel="stylesheet" type="text/css" href="https://cdn.sspai.com/sspai.css"> -->
-    <script src="/showdown.min.js"></script>
+    <script src="js/showdown.min.js"></script>
 
-    <link rel="stylesheet" href="/default.min.css">
-    <script src="/highlight.min.js"></script>
+    <link rel="stylesheet" href="css/default.min.css">
+    <script src="js/highlight.min.js"></script>
 </head>
 
 <body>
@@ -20,11 +20,16 @@
     </div>
 
     <script>
-        var latest;
+        let latest;
         const html = document.getElementById("note-html-id");
         const markdown = document.getElementById("note-md-id");
 
         const converter = new showdown.Converter({ tables: true });
+
+        convert = () => {
+            html.innerHTML = converter.makeHtml(markdown.value) || '<h1>preview here</h1>';
+            hljs.highlightAll();
+        };
 
         window.onload = () => {
             document.cookie = 'sessionId=' + crypto.randomUUID();
@@ -32,22 +37,19 @@
         };
 
         markdown.onchange = () => {
-            console.log("new content: " + markdown.value);
-            html.innerHTML = converter.makeHtml(markdown.value);
-            hljs.highlightAll();
+            convert();
             fetch("update", {
                 headers: {
                     "Content-Type": "text/plain"
                 },
                 method: "POST",
                 body: markdown.value
-            })
+            });
         }
-        markdown.onkeypress = (event) => {
-            if (event.keyCode == 13) {
+        markdown.onkeydown = (event) => {
+            if (event.code === "Enter") {
                 console.log("new content: " + markdown.value);
-                html.innerHTML = converter.makeHtml(markdown.value);
-                hljs.highlightAll();
+                convert();
                 fetch("update", {
                     headers: {
                         "Content-Type": "text/plain"
@@ -64,23 +66,22 @@
                 console.log("connect successfully");
             };
             latest.onclose = () => {
-                console.log("connect closed");
+                alert(`lost connection on ${new Date().toLocaleString()}`);
             };
             latest.onmessage = (response) => {
                 console.log("received message: " + response.data);
                 markdown.value = response.data;
-                html.innerHTML = converter.makeHtml(markdown.value) || '<h1>preview here</h1>';
-                hljs.highlightAll();
+                convert();
             };
         }
     </script>
     <style>
         body {
-            margin: 0px;
+            margin: 0;
         }
 
         #note-all-id {
-            margin: 0px;
+            margin: 0;
             display: flex;
             height: 100vh;
         }
