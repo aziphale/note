@@ -6,8 +6,10 @@
     <link rel="icon" href="/favicon.ico">
     <link rel="stylesheet" type="text/css" href="content.css">
     <!-- <link rel="stylesheet" type="text/css" href="https://cdn.sspai.com/sspai.css"> -->
-    <script src="https://cdn.jsdelivr.net/npm/showdown@1.9.1/dist/showdown.min.js"></script>
-    <script src="/shutdown-table.min.js"></script>
+    <script src="/showdown.min.js"></script>
+
+    <link rel="stylesheet" href="/default.min.css">
+    <script src="/highlight.min.js"></script>
 </head>
 
 <body>
@@ -21,7 +23,8 @@
         var latest;
         const html = document.getElementById("note-html-id");
         const markdown = document.getElementById("note-md-id");
-        const converter = new showdown.Converter({extensions: ['table']});
+
+        const converter = new showdown.Converter({ tables: true });
 
         window.onload = () => {
             document.cookie = 'sessionId=' + crypto.randomUUID();
@@ -31,6 +34,7 @@
         markdown.onchange = () => {
             console.log("new content: " + markdown.value);
             html.innerHTML = converter.makeHtml(markdown.value);
+            hljs.highlightAll();
             fetch("update", {
                 headers: {
                     "Content-Type": "text/plain"
@@ -43,6 +47,7 @@
             if (event.keyCode == 13) {
                 console.log("new content: " + markdown.value);
                 html.innerHTML = converter.makeHtml(markdown.value);
+                hljs.highlightAll();
                 fetch("update", {
                     headers: {
                         "Content-Type": "text/plain"
@@ -65,6 +70,7 @@
                 console.log("received message: " + response.data);
                 markdown.value = response.data;
                 html.innerHTML = converter.makeHtml(markdown.value) || '<h1>preview here</h1>';
+                hljs.highlightAll();
             };
         }
     </script>
