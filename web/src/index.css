@@ -1,0 +1,10 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  height: 98vh;
+  width: 99%;
+  margin: 1vh 0.5% 1vh 0.5%;
+}

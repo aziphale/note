@@ -55,6 +55,7 @@ func Listen(channel string) (bareChannel <-chan string) {
 func initClient() (err error) {
 	client = redis.NewClient(&redis.Options{
 		Addr: "127.0.0.1:6379",
+		DB:   1,
 	})
 
 	_, err = client.Ping(context.TODO()).Result()

@@ -61,7 +61,7 @@
         }
 
         function talk() {
-            latest = new WebSocket(`wss://${location.host}/echo`);
+            latest = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/echo`);
             latest.onopen = () => {
                 console.log("connect successfully");
             };
@@ -96,11 +96,6 @@
             width: 0 !important
         }
 
-        /* hide scroll for firefox */
-        #note-md-id {
-            overflow: -moz-scrollbars-none;
-        }
-
         #note-blank-id {
             width: 2%;
         }
@@ -113,11 +108,6 @@
         /* hide scroll */
         #note-html-id::-webkit-scrollbar {
             width: 0 !important
-        }
-
-        /* hide scroll for firefox */
-        #note-html-id {
-            overflow: -moz-scrollbars-none;
         }
     </style>
 </body>

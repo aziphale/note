@@ -1,0 +1,41 @@
+.App {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+#note-md-id {
+    resize: none;
+    width: 49%;
+    height: 100%;
+}
+
+#note-blank-id {
+    resize: none;
+    width: 2%;
+    height: 100%;
+}
+
+#note-html-id {
+    overflow-y: auto;
+    width: 49%;
+    height: 100%;
+}
+
+/* hide scroll */
+#note-md-id::-webkit-scrollbar {
+    width: 0 !important
+}
+
+/* hide scroll */
+#note-html-id::-webkit-scrollbar {
+    width: 0 !important
+}
+
+#note-blank-id.black {
+    background-color: black;
+}
+
+#note-blank-id.grey {
+    background-color: grey;
+}
