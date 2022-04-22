@@ -6,20 +6,33 @@
 
 #note-md-id {
     resize: none;
-    width: 49%;
     height: 100%;
 }
 
 #note-blank-id {
-    resize: none;
-    width: 2%;
     height: 100%;
 }
 
 #note-html-id {
     overflow-y: auto;
-    width: 49%;
     height: 100%;
+    word-break: break-all;
+}
+
+.hide {
+    display: none;
+}
+
+.full {
+    width: 100%;
+}
+
+.half {
+    width: 49%;
+}
+
+.blank {
+    width: 2%;
 }
 
 /* hide scroll */
