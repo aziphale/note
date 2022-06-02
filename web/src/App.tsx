@@ -4,6 +4,8 @@ import transfer from "./utils/markdown";
 import refresh from "./utils/highlight";
 
 const INDENT = '    ';
+const CURRENT_CONTENT = '\n<a id="current"/>\n';
+const CURRENT_TAG = '#current';
 
 const enum SHOW_MODE {
     HALF,
@@ -28,10 +30,16 @@ function App() {
         };
         latest.onclose = () => {
             alert(`lost connection on ${new Date().toLocaleString()}`);
+            location.reload();
         };
         latest.onmessage = (response) => {
             setContent(response.data)
         };
+
+        setInterval(() => {
+            latest.send("ping");
+            console.log("websocket alive");
+        }, 30 * 1000);
     }, []);
 
     useEffect(() => {
@@ -41,13 +49,23 @@ function App() {
 
     let onKeyPress: React.KeyboardEventHandler<HTMLTextAreaElement> = (event) => {
         let markdown: HTMLTextAreaElement = event.target as HTMLTextAreaElement;
+
+        // tab => four blanks
+        if (event.code === "Tab") {
+            event.preventDefault();
+            let start = markdown.selectionStart;
+            let end = markdown.selectionEnd;
+            markdown.value = markdown.value.substring(0,start) + INDENT + markdown.value.substring(end);
+        }
+
+        // update content and refresh preview
         if (event.code === "Enter") {
             fetch("api/update", {
                 headers: {
                     "Content-Type": "text/plain"
                 },
                 method: "POST",
-                body: content
+                body: markdown.value
             }).then(res => res.json()).then(res => {
                 if (res.status && res.status === 200) {
                     console.log("updated");
@@ -55,17 +73,12 @@ function App() {
                     alert(`lost connection on ${new Date().toLocaleString()}`);
                 }
             });
-        }
-        if (event.code === "Tab") {
-            event.preventDefault();
-            let start = markdown.selectionStart;
-            let end = markdown.selectionEnd;
-            markdown.value = markdown.value.substring(0,start) + INDENT + markdown.value.substring(end);
+            setContent(markdown.value);
         }
     }
 
     let onChange: React.ChangeEventHandler<HTMLTextAreaElement> = (event: ChangeEvent<HTMLTextAreaElement>) => {
-        setContent(event.target.value);
+
     }
 
     const [mode, setMode] = useState(SHOW_MODE.HALF);

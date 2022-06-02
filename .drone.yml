@@ -1,0 +1,22 @@
+kind: pipeline
+type: exec
+name: default
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+  - name: backend
+    commands:
+      - go build -o /home/application/bin/note
+      - EXIST_PID=`ps -ef | grep 'note' | grep -v 'grep' | awk '{print $2}'`; if [ "$EXIST_PID"SUFFIX != ""SUFFIX ]; then kill $EXIST_PID; fi;
+      - nohup /home/application/bin/note >/dev/null 2>&1 &
+
+  - name: frontend
+    commands:
+      - cd web/
+      - npm install
+      - npm run build
+      - rm -rf /var/www/note.$PRIMARY_DOMAIN/*
+      - cp -R build/* /var/www/note.$PRIMARY_DOMAIN/

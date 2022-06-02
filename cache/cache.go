@@ -1,7 +1,6 @@
 package cache
 
 import (
-	"context"
 	"log"
 	"time"
 
@@ -9,29 +8,28 @@ import (
 )
 
 var client *redis.Client
-var Background = context.Background()
 
 func SetWithNoExpire(key string, value string) (err error) {
-	result := client.Set(Background, key, value, time.Duration(0))
+	result := client.Set(key, value, time.Duration(0))
 	return result.Err()
 }
 
 func SetWithExpire(key string, value string, expireSecond uint32) (err error) {
-	result := client.Set(Background, key, value, time.Duration(expireSecond)*time.Second)
+	result := client.Set(key, value, time.Duration(expireSecond)*time.Second)
 	return result.Err()
 }
 
 func Get(key string) (value string) {
-	result := client.Get(Background, key)
+	result := client.Get(key)
 	return result.Val()
 }
 
 func Bell(channel string, value string) {
-	client.Publish(Background, channel, value)
+	client.Publish(channel, value)
 }
 
 func Listen(channel string) (bareChannel <-chan string) {
-	sub := client.Subscribe(Background, channel)
+	sub := client.Subscribe(channel)
 	bare := make(chan string)
 	go func() {
 		origin := sub.Channel()
@@ -54,11 +52,11 @@ func Listen(channel string) (bareChannel <-chan string) {
 // init connect
 func initClient() (err error) {
 	client = redis.NewClient(&redis.Options{
-		Addr: "127.0.0.1:6379",
+		Addr: "note.redis.local:6379",
 		DB:   1,
 	})
 
-	_, err = client.Ping(context.TODO()).Result()
+	_, err = client.Ping().Result()
 	if err != nil {
 		return err
 	}
